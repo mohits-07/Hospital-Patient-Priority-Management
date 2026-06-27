@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SHAAI SHANKAR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #6ebfee;
+            margin: 0;
+            padding: 0;
+        }
+
+        
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;   
+            font-size: 14px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: #0b82d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover { background: #2980b9; }
+
+        
+        #resultBox {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+        }
+        #resultBox h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        #resultBox ul {
+            text-align: left;
+            margin: 10px auto;
+            max-width: 400px;
+        }
+        #resultBox li {
+            margin: 5px 0;
+        }
+        .EMERGENCY { background: #ffcccc; border: 2px solid red; color: darkred; }
+        .URGENT    { background: #fff3cc; border: 2px solid orange; color: darkorange; }
+        .NORMAL    { background: #ccffcc; border: 2px solid green; color: darkgreen; }
+
+        .add-queue-btn {
+            background: #28a745;
+            margin-top: 10px;
+        }
+        .add-queue-btn:hover { background: #1e7e34; }
+
+        .field-error {
+            display: none;
+            color: #c0392b;
+            font-size: 12.5px;
+            margin-top: 4px;
+            background: #fdecea;
+            border-left: 3px solid red;
+            padding: 4px 8px;
+            border-radius: 3px;
+            white-space: pre-line;   /* allows \n line breaks in symptom error */
+        }
+
+    
+    </style>
+</head>
+<body>
+
+    <header>
+        <b>City Hospital — Patient Priority Form</b>
+        <nav>
+            <a href="Main_page.html">Home</a>
+            <a href="About_us.html">About Us</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Patient Priority Form</h2>
+
+        
+        <form id="patientForm" onsubmit="assessPatient(event)">
+
+            <label for="name">Patient Name: *</label>
+            <input type="text" id="name" name="name" required placeholder="e.g. Ravi Kumar">
+            <span class="field-error" id="err_name"></span>
+
+            <label for="patientid">Patient ID: *</label>
+            <input type="text" id="patientid" name="patientid" required placeholder="e.g. P001 (P followed by 3–6 digits)">
+            <span class="field-error" id="err_patientid"></span>
+
+            <label for="age">Age: *</label>
+            <input type="number" id="age" name="age" required min="0" max="100" placeholder="e.g. 45 (0–100)">
+            <span class="field-error" id="err_age"></span>
+
+            <label for="gender">Gender:</label>
+            
+            <select id="gender" name="gender">
+                <option value="">-- Select --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="bloodgroup">Blood Group:</label>
+           
+            <select id="bloodgroup" name="bloodgroup">
+                <option value="">-- Select --</option>
+                <option>A+</option><option>A-</option>
+                <option>B+</option><option>B-</option>
+                <option>O+</option><option>O-</option>
+                <option>AB+</option><option>AB-</option>
+            </select>
+
+            <label for="symptoms">Symptoms: *</label>
+            <textarea id="symptoms" name="symptoms" rows="4"
+                placeholder="e.g. chest pain, fever, breathing difficulty" required></textarea>
+            <span class="field-error" id="err_symptoms"></span>
+            <small style="color:gray;">Separate symptoms with commas. <b>Only these exact symptoms are accepted:</b><br>
+                chest pain, severe bleeding, unconscious, stroke, major accident, cardiac arrest, severe burns,
+                fever, fracture, moderate pain, breathing difficulty, high fever, severe headache, vision loss</small>
+
+            <label for="bp">Blood Pressure — Systolic (mmHg): * <small style="color:gray;">(40–250)</small></label>
+            <input type="number" id="bp" name="bp" required placeholder="e.g. 120" min="40" max="250">
+            <span class="field-error" id="err_bp"></span>
+
+            <label for="hr">Heart Rate (bpm): * <small style="color:gray;">(20–250)</small></label>
+            <input type="number" id="hr" name="hr" required placeholder="e.g. 80" min="20" max="250">
+            <span class="field-error" id="err_hr"></span>
+
+            <label for="spo2">Oxygen Saturation SpO2 (%): * <small style="color:gray;">(50–100)</small></label>
+            <input type="number" id="spo2" name="spo2" required placeholder="e.g. 98" min="50" max="100">
+            <span class="field-error" id="err_spo2"></span>
+
+            <label for="diabetic">Diabetic:</label>
+            <select id="diabetic" name="diabetic">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+
+            <label for="conditions">Other Medical Conditions:</label>
+            <textarea id="conditions" name="conditions" rows="3"
+                placeholder="e.g. diabetes, hypertension"></textarea>
+
+            
+            <button type="submit">⚡ Check Priority</button>
+        </form>
+
+        <div id="resultBox">
+            <h3 id="resultTitle"></h3>
+            <p id="resultAction"></p>
+            <p id="resultWait"></p>
+            <b>Reasons:</b>
+            <ul id="resultReasons"></ul>
+            <button class="add-queue-btn" onclick="addToQueue()">✅ Add to Queue</button>
+            &nbsp;
+            <button onclick="resetForm()" style="background:gray;margin-top:10px;">🔄 Add Another Patient</button>
+        </div>
+    </div>
+
+    <script>
+
+        /* ── Strict symptom sets (exact match only, 14 total) ─────────────── */
+        var EMERGENCY_SYMPTOMS = [
+            "chest pain", "severe bleeding", "unconscious",
+            "stroke", "major accident", "cardiac arrest", "severe burns"
+        ];
+        var URGENT_SYMPTOMS = [
+            "fever", "fracture", "moderate pain",
+            "breathing difficulty", "high fever", "severe headache", "vision loss"
+        ];
+        var ALL_VALID_SYMPTOMS = EMERGENCY_SYMPTOMS.concat(URGENT_SYMPTOMS);
+
+        var currentPatient = null;
+
+        /* ── Helper: show / clear inline error under a field ─────────────── */
+        function setError(fieldId, message) {
+            var el = document.getElementById("err_" + fieldId);
+            if (el) { el.textContent = message; el.style.display = message ? "block" : "none"; }
+            var input = document.getElementById(fieldId);
+            if (input) input.style.borderColor = message ? "red" : "#ccc";
+        }
+        function clearAllErrors() {
+            document.querySelectorAll(".field-error").forEach(function(e) {
+                e.textContent = ""; e.style.display = "none";
+            });
+            document.querySelectorAll("input, textarea, select").forEach(function(e) {
+                e.style.borderColor = "#ccc";
+            });
+        }
+
+        /* ── Master validator — returns true if all fields pass ──────────── */
+        function validateForm(fields) {
+            clearAllErrors();
+            var valid = true;
+
+            /* 1. Patient Name — alphabets + spaces only, 2–50 chars */
+            if (!fields.name) {
+                setError("name", "Patient name is required.");
+                valid = false;
+            } else if (!/^[A-Za-z][A-Za-z ]{1,49}$/.test(fields.name)) {
+                setError("name", "Name must contain alphabets and spaces only (2–50 characters). No digits or symbols.");
+                valid = false;
+            }
+
+            /* 2. Patient ID — must match P followed by 3–6 digits */
+            if (!fields.id) {
+                setError("patientid", "Patient ID is required.");
+                valid = false;
+            } else if (!/^P\d{3,6}$/.test(fields.id)) {
+                setError("patientid", "Invalid format. Use 'P' followed by 3–6 digits (e.g. P001, P10042).");
+                valid = false;
+            }
+
+            /* 3. Age — integer 0–100 */
+            if (fields.ageRaw === "" || fields.ageRaw === null) {
+                setError("age", "Age is required.");
+                valid = false;
+            } else if (isNaN(fields.age) || !Number.isInteger(fields.age)) {
+                setError("age", "Age must be a whole number.");
+                valid = false;
+            } else if (fields.age < 0 || fields.age > 100) {
+                setError("age", "Age must be between 0 and 100.");
+                valid = false;
+            }
+
+            /* 4. Symptoms — non-empty, every entry must be in ALL_VALID_SYMPTOMS */
+            if (!fields.sympRaw.trim()) {
+                setError("symptoms", "Symptoms field is required. Enter at least one valid symptom.");
+                valid = false;
+            } else {
+                var invalidSymptoms = [];
+                fields.symptoms.forEach(function(s) {
+                    if (s && ALL_VALID_SYMPTOMS.indexOf(s) === -1) {
+                        invalidSymptoms.push("'" + s + "'");
+                    }
+                });
+                if (invalidSymptoms.length > 0) {
+                    setError("symptoms",
+                        "Invalid symptom(s): " + invalidSymptoms.join(", ") + ".\n" +
+                        "Only these are accepted: " + ALL_VALID_SYMPTOMS.join(", ") + "."
+                    );
+                    valid = false;
+                }
+            }
+
+            /* 5. Blood Pressure — mandatory, 40–250 */
+            if (fields.bpRaw === "" || fields.bpRaw === null) {
+                setError("bp", "Blood Pressure is required.");
+                valid = false;
+            } else if (isNaN(fields.bp)) {
+                setError("bp", "Blood Pressure must be a number.");
+                valid = false;
+            } else if (fields.bp < 40 || fields.bp > 250) {
+                setError("bp", "Blood Pressure must be between 40 and 250 mmHg.");
+                valid = false;
+            }
+
+            /* 6. Heart Rate — mandatory, 20–250 */
+            if (fields.hrRaw === "" || fields.hrRaw === null) {
+                setError("hr", "Heart Rate is required.");
+                valid = false;
+            } else if (isNaN(fields.hr)) {
+                setError("hr", "Heart Rate must be a number.");
+                valid = false;
+            } else if (fields.hr < 20 || fields.hr > 250) {
+                setError("hr", "Heart Rate must be between 20 and 250 bpm.");
+                valid = false;
+            }
+
+            /* 7. SpO2 — mandatory, 50–100 */
+            if (fields.spo2Raw === "" || fields.spo2Raw === null) {
+                setError("spo2", "SpO2 is required.");
+                valid = false;
+            } else if (isNaN(fields.spo2)) {
+                setError("spo2", "SpO2 must be a number.");
+                valid = false;
+            } else if (fields.spo2 < 50 || fields.spo2 > 100) {
+                setError("spo2", "SpO2 must be between 50 and 100%.");
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        /* ── Main assess function ─────────────────────────────────────────── */
+        function assessPatient(event) {
+            event.preventDefault();
+
+            var nameRaw  = document.getElementById("name").value.trim();
+            var idRaw    = document.getElementById("patientid").value.trim();
+            var ageRaw   = document.getElementById("age").value.trim();
+            var gender   = document.getElementById("gender").value;
+            var bg       = document.getElementById("bloodgroup").value;
+            var sympRaw  = document.getElementById("symptoms").value;
+            var bpRaw    = document.getElementById("bp").value.trim();
+            var hrRaw    = document.getElementById("hr").value.trim();
+            var spo2Raw  = document.getElementById("spo2").value.trim();
+            var diabetic = document.getElementById("diabetic").value;
+            var conditions = document.getElementById("conditions").value;
+
+            var fields = {
+                name    : nameRaw,
+                id      : idRaw,
+                ageRaw  : ageRaw,
+                age     : ageRaw !== "" ? Number(ageRaw) : NaN,
+                sympRaw : sympRaw,
+                symptoms: sympRaw.toLowerCase().split(",").map(function(s){ return s.trim(); }).filter(Boolean),
+                bpRaw   : bpRaw,
+                bp      : bpRaw !== "" ? parseFloat(bpRaw) : NaN,
+                hrRaw   : hrRaw,
+                hr      : hrRaw !== "" ? parseFloat(hrRaw) : NaN,
+                spo2Raw : spo2Raw,
+                spo2    : spo2Raw !== "" ? parseFloat(spo2Raw) : NaN
+            };
+
+            if (!validateForm(fields)) {
+                /* Scroll to first red field */
+                var first = document.querySelector("input[style*='border-color: red'], textarea[style*='border-color: red']");
+                if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+
+            /* ── Triage logic ────────────────────────────────────────────── */
+            var priority = "Normal";
+            var reasons  = [];
+
+            EMERGENCY_SYMPTOMS.forEach(function(es) {
+                fields.symptoms.forEach(function(s) {
+                    if (s === es) {
+                        priority = "Emergency";
+                        reasons.push("Emergency symptom: '" + s + "'");
+                    }
+                });
+            });
+
+            if (priority !== "Emergency") {
+                URGENT_SYMPTOMS.forEach(function(us) {
+                    fields.symptoms.forEach(function(s) {
+                        if (s === us) {
+                            priority = "Urgent";
+                            reasons.push("Urgent symptom: '" + s + "'");
+                        }
+                    });
+                });
+            }
+
+            if (fields.spo2 < 90) {
+                priority = "Emergency";
+                reasons.push("SpO2 = " + fields.spo2 + "% is critically low (< 90%)");
+            }
+            if (fields.hr > 120) {
+                priority = "Emergency";
+                reasons.push("Heart Rate = " + fields.hr + " bpm is critically high (> 120)");
+            }
+            if (fields.bp < 90) {
+                priority = "Emergency";
+                reasons.push("Blood Pressure = " + fields.bp + " mmHg is critically low (< 90)");
+            }
+
+            if (fields.age > 65 && fields.symptoms.length > 0 && priority === "Normal") {
+                priority = "Urgent";
+                reasons.push("Elderly patient (age " + fields.age + ") with symptoms — needs attention");
+            }
+
+            if (reasons.length === 0) {
+                reasons.push("No critical symptoms or abnormal vitals detected");
+            }
+
+            var action = "", wait = "", emoji = "";
+            if (priority === "Emergency") {
+                action = "Send to Emergency Room IMMEDIATELY. Call doctor now!";
+                wait   = "Must be seen in < 5 minutes!";
+                emoji  = "🚨";
+            } else if (priority === "Urgent") {
+                action = "Inform doctor soon. Monitor vitals every 15 minutes.";
+                wait   = "Must be seen within 30 minutes.";
+                emoji  = "⚡";
+            } else {
+                action = "Patient can wait. Nurse check every 60 minutes.";
+                wait   = "Can be seen within 2 hours.";
+                emoji  = "✅";
+            }
+
+            currentPatient = {
+                id: fields.id, name: fields.name, age: fields.age,
+                gender: gender, bloodgroup: bg, symptoms: fields.symptoms,
+                bp: fields.bp, hr: fields.hr, spo2: fields.spo2,
+                diabetic: diabetic, conditions: conditions,
+                priority: priority, action: action, wait: wait,
+                time: new Date().toLocaleTimeString(), status: "waiting"
+            };
+
+            var box = document.getElementById("resultBox");
+            box.className = priority.toUpperCase();
+            document.getElementById("resultTitle").innerHTML = emoji + " PRIORITY: " + priority.toUpperCase() + " " + emoji;
+            document.getElementById("resultAction").innerHTML = "<b>Action:</b> " + action;
+            document.getElementById("resultWait").innerHTML   = "<b>Wait Time:</b> " + wait;
+
+            var ul = document.getElementById("resultReasons");
+            ul.innerHTML = "";
+            reasons.forEach(function(r) {
+                var li = document.createElement("li");
+                li.textContent = r;
+                ul.appendChild(li);
+            });
+
+            box.style.display = "block";
+            box.scrollIntoView({ behavior: "smooth" });
+        }
+
+        function addToQueue() {
+            if (!currentPatient) { alert("No patient data!"); return; }
+            var data  = localStorage.getItem("cityHospitalQueue");
+            var queue = data ? JSON.parse(data) : [];
+            queue.push(currentPatient);
+            localStorage.setItem("cityHospitalQueue", JSON.stringify(queue));
+            alert("✅ " + currentPatient.name + " added to queue as " + currentPatient.priority + "!");
+            window.location.href = "queue.html";
+        }
+
+        function resetForm() {
+            document.getElementById("patientForm").reset();
+            document.getElementById("resultBox").style.display = "none";
+            clearAllErrors();
+            currentPatient = null;
+            window.scrollTo(0, 0);
+        }
+    </script>
+
+</body>
+</html>

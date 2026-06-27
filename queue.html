@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Patient Queue - City Hospital</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: lightblue;
+      margin: 0;
+    }
+    header {
+      background-color: #007BFF;
+      color: white;
+      padding: 12px 20px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover { text-decoration: underline; }
+
+    .box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 950px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .sectionhead {
+      background: #007BFF;
+      color: white;
+      padding: 10px;
+      margin: -20px -20px 15px -20px;
+      font-size: 17px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .stats {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .stat {
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      text-align: center;
+      min-width: 110px;
+    }
+    table { border-collapse: collapse; width: 100%; }
+    th { background: #007BFF; color: white; padding: 10px; border: 1px solid #ccc; }
+    td { border: 1px solid #ccc; padding: 9px; font-size: 13px; text-align: center; }
+    tr.EMERGENCY { background: #ffcccc; }
+    tr.URGENT    { background: #fff3cc; }
+    tr.NORMAL    { background: #ccffcc; }
+    button { padding: 7px 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; }
+    .btn-blue   { background: #007BFF; color: white; }
+    .btn-red    { background: #dc3545; color: white; }
+    .btn-green  { background: #28a745; color: white; }
+    .btn-orange { background: orange; color: white; }
+    .empty { padding: 30px; text-align: center; color: gray; font-size: 15px; }
+    footer { background: #F5F5F5; color: #333; text-align: center; padding: 12px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <b>City Hospital — Patient Queue</b>
+  <nav>
+    <a href="Main_page.html">Home</a>
+    <a href="Patient_details.html">Add Patient</a>
+    <a href="About_us.html">About Us</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+
+<div class="box">
+  <div class="sectionhead">📊 Queue Summary</div>
+  <div class="stats">
+    <div class="stat" style="background:#ffcccc;color:darkred;">🚨 Emergency<br><span id="ec" style="font-size:26px;">0</span></div>
+    <div class="stat" style="background:#fff3cc;color:darkorange;">⚡ Urgent<br><span id="uc" style="font-size:26px;">0</span></div>
+    <div class="stat" style="background:#ccffcc;color:darkgreen;">✅ Normal<br><span id="nc" style="font-size:26px;">0</span></div>
+    <div class="stat" style="background:#e0e0ff;color:navy;">👥 Total<br><span id="tc" style="font-size:26px;">0</span></div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="sectionhead">🏥 Active Patient Queue (Emergency First)</div>
+  <div style="text-align:right;margin-bottom:12px;">
+    <button class="btn-blue" onclick="window.location.href='Patient_details.html'">➕ Add Patient</button>
+    &nbsp;
+    <button class="btn-orange" onclick="callNext()">📣 Call Next Patient</button>
+    &nbsp;
+    <button class="btn-red" onclick="clearAll()">🗑 Clear All</button>
+  </div>
+  <div id="queueDiv"><div class="empty">No patients yet. <a href="Patient_details.html">Add a patient</a>.</div></div>
+</div>
+
+<div class="box">
+  <div class="sectionhead">✅ Discharged Patients</div>
+  <div id="dischargedDiv"><div class="empty">No discharged patients yet.</div></div>
+</div>
+
+<footer><p>Contact: +91 98765 43210 | Email: info@cityhospital.com</p></footer>
+
+<script>
+  window.onload = function() { renderQueue(); renderDischarged(); };
+
+  function getQueue() {
+    var d = localStorage.getItem("cityHospitalQueue");
+    return d ? JSON.parse(d) : [];
+  }
+  function saveQueue(q) { localStorage.setItem("cityHospitalQueue", JSON.stringify(q)); }
+
+  function renderQueue() {
+    var queue = getQueue().filter(function(p){ return p.status !== "discharged"; });
+    queue.sort(function(a,b){
+      var o = {Emergency:0, Urgent:1, Normal:2};
+      return (o[a.priority]||2) - (o[b.priority]||2);
+    });
+
+    var e=0,u=0,n=0;
+    queue.forEach(function(p){
+      if(p.priority==="Emergency") e++;
+      else if(p.priority==="Urgent") u++;
+      else n++;
+    });
+    document.getElementById("ec").textContent=e;
+    document.getElementById("uc").textContent=u;
+    document.getElementById("nc").textContent=n;
+    document.getElementById("tc").textContent=queue.length;
+
+    var div = document.getElementById("queueDiv");
+    if(!queue.length){div.innerHTML='<div class="empty">Queue is empty. <a href="Patient_details.html">Add a patient</a>.</div>';return;}
+
+    var html='<table><tr><th>#</th><th>ID</th><th>Name</th><th>Age</th><th>Symptoms</th><th>BP</th><th>HR</th><th>SpO2</th><th>Priority</th><th>Wait</th><th>Status</th><th>Actions</th></tr>';
+    queue.forEach(function(p,i){
+      var sym = Array.isArray(p.symptoms) ? p.symptoms.join(", ") : p.symptoms;
+      var statusBadge = p.status==="inprogress"
+        ? "<span style='background:#fef9c3;padding:3px 7px;border-radius:4px;color:darkorange;font-size:12px;'>In Progress</span>"
+        : "<span style='background:#dbeafe;padding:3px 7px;border-radius:4px;color:navy;font-size:12px;'>Waiting</span>";
+      html+='<tr class="'+p.priority+'">';
+      html+='<td>'+(i+1)+'</td><td style="font-size:11px;color:gray">'+p.id+'</td>';
+      html+='<td><b>'+p.name+'</b></td><td>'+p.age+'</td>';
+      html+='<td style="font-size:11px;text-align:left">'+sym+'</td>';
+      html+='<td>'+(p.bp||'-')+'</td><td>'+(p.hr||'-')+'</td><td>'+(p.spo2||'-')+'</td>';
+      var emoji = p.priority==="Emergency"?"🚨":p.priority==="Urgent"?"⚡":"✅";
+      html+='<td><b>'+emoji+' '+p.priority+'</b></td>';
+      html+='<td style="font-size:11px">'+p.wait+'</td>';
+      html+='<td>'+statusBadge+'</td>';
+      html+='<td><button class="btn-red" style="font-size:11px;padding:5px 8px;" onclick="discharge(\''+p.id+'\')">Discharge</button></td>';
+      html+='</tr>';
+    });
+    html+='</table>';
+    div.innerHTML=html;
+  }
+
+  function renderDischarged() {
+    var all = getQueue().filter(function(p){ return p.status==="discharged"; });
+    var div = document.getElementById("dischargedDiv");
+    if(!all.length){div.innerHTML='<div class="empty">No discharged patients yet.</div>';return;}
+    var html='<table><tr><th>Name</th><th>Age</th><th>Priority</th><th>Symptoms</th><th>Time</th></tr>';
+    all.forEach(function(p){
+      var sym = Array.isArray(p.symptoms)?p.symptoms.join(", "):p.symptoms;
+      html+='<tr><td>'+p.name+'</td><td>'+p.age+'</td><td>'+p.priority+'</td><td>'+sym+'</td><td style="font-size:11px;color:gray">'+p.time+'</td></tr>';
+    });
+    html+='</table>';
+    div.innerHTML=html;
+  }
+
+  function discharge(id) {
+    if(!confirm("Discharge this patient?")) return;
+    var q = getQueue();
+    q.forEach(function(p){ if(p.id===id){ p.status="discharged"; } });
+    saveQueue(q);
+    renderQueue(); renderDischarged();
+    alert("Patient discharged!");
+  }
+
+  function callNext() {
+    var q = getQueue().filter(function(p){ return p.status!=="discharged"; });
+    q.sort(function(a,b){ var o={Emergency:0,Urgent:1,Normal:2}; return (o[a.priority]||2)-(o[b.priority]||2); });
+    var next = q.find(function(p){ return p.status==="waiting"; });
+    if(!next){ alert("No waiting patients!"); return; }
+    var all = getQueue();
+    all.forEach(function(p){ if(p.id===next.id) p.status="inprogress"; });
+    saveQueue(all);
+    alert("📣 Calling: "+next.name+" ["+next.priority+"] — Please proceed to treatment area.");
+    renderQueue();
+  }
+
+  function clearAll() {
+    if(!confirm("Delete ALL patients? This cannot be undone!")) return;
+    localStorage.removeItem("cityHospitalQueue");
+    renderQueue(); renderDischarged();
+  }
+</script>
+</body>
+</html>

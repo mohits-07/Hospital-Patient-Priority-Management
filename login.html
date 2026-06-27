@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>City Hospital - Login</title>
+    <style>
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background-color:lightblue; font-family:Arial,sans-serif; min-height:100vh; }
+        header { background-color:#007BFF; color:white; padding:0; }
+        .header-top { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+        .site-title { font-size:20px; font-weight:bold; }
+        nav { display:flex; gap:0; flex-wrap:wrap; padding:0 10px; }
+        nav a { color:white; text-decoration:none; font-weight:bold; font-size:13px; padding:10px 14px; transition:0.15s; }
+        nav a:hover { background:rgba(255,255,255,0.2); }
+        .card { width:370px; margin:36px auto; background:white; border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,0.15); overflow:hidden; }
+        .card-top { background:#007BFF; color:white; text-align:center; padding:22px 20px 14px; }
+        .card-top .icon { font-size:38px; }
+        .card-top h2 { font-size:20px; margin-top:6px; }
+        .card-top p { font-size:12px; opacity:0.85; margin-top:3px; }
+        .tabs { display:flex; border-bottom:2px solid #e0e0e0; }
+        .tab-btn { flex:1; padding:10px 0; border:none; background:#f5f5f5; color:#666; font-size:12px; font-weight:bold; cursor:pointer; font-family:Arial,sans-serif; transition:0.15s; }
+        .tab-btn:hover { background:#e8f4ff; color:#007BFF; }
+        .tab-btn.active { background:white; color:#007BFF; border-bottom:2.5px solid #007BFF; margin-bottom:-2px; }
+        .panel { display:none; padding:22px 24px 18px; }
+        .panel.active { display:block; }
+        .field { margin-bottom:13px; }
+        .field label { display:block; font-size:12px; font-weight:bold; color:#444; margin-bottom:5px; }
+        .field input, .field select { width:100%; padding:10px 12px; border:1px solid #ccc; border-radius:6px; font-size:14px; font-family:Arial,sans-serif; }
+        .field input:focus, .field select:focus { border-color:#007BFF; outline:none; box-shadow:0 0 0 3px rgba(0,123,255,0.1); }
+        .btn-main { width:100%; padding:11px; background:#007BFF; color:white; border:none; border-radius:6px; font-size:15px; font-weight:bold; cursor:pointer; margin-top:4px; font-family:Arial,sans-serif; }
+        .btn-main:hover { background:#0056b3; }
+        .msg { font-size:12px; padding:8px 10px; border-radius:5px; margin-bottom:12px; display:none; text-align:center; }
+        .msg.error   { background:#fde8e8; color:#b91c1c; border:1px solid #fca5a5; }
+        .msg.success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+        .msg.info    { background:#eff6ff; color:#1d4ed8; border:1px solid #93c5fd; }
+        .strength-bar { height:4px; border-radius:4px; margin-top:5px; background:#e0e0e0; width:0; transition:0.3s; }
+        .strength-label { font-size:11px; margin-top:3px; color:#888; }
+        .hint { font-size:12px; color:#888; margin-top:12px; text-align:center; }
+        .hint a { color:#007BFF; text-decoration:none; cursor:pointer; }
+        .hint a:hover { text-decoration:underline; }
+        .card-foot { background:#f9f9f9; padding:9px; text-align:center; font-size:11px; color:#aaa; border-top:1px solid #eee; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <span class="site-title">🏥 City Hospital</span>
+        </div>
+        <nav>
+            <a href="Main_page.html">🏠 Home</a>
+            <a href="Patient_details.html">📋 Patient Form</a>
+            <a href="patient_database.html">🗂 Database</a>
+            <a href="queue.html">🏥 Queue</a>
+            <a href="doctors.html">👨‍⚕️ Doctors</a>
+            <a href="About_us.html">ℹ️ About Us</a>
+            <a href="login.html" style="background:rgba(255,255,255,0.3);">🔐 Login</a>
+        </nav>
+    </header>
+<div class="card">
+    <div class="card-top">
+        <div class="icon">🏥</div>
+        <h2>City Hospital Portal</h2>
+        <p>Patient Management System</p>
+    </div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login',this)">🔐 Sign In</button>
+        <button class="tab-btn"        onclick="switchTab('register',this)">📝 New User</button>
+        <button class="tab-btn"        onclick="switchTab('forgot',this)">🔑 Forgot Password</button>
+    </div>
+    <!-- SIGN IN -->
+    <div class="panel active" id="panel-login">
+        <div class="msg" id="login-err"></div>
+        <div class="msg" id="login-ok"></div>
+        <div class="field"><label>Username</label><input type="text" id="li-user" placeholder="Enter your username"></div>
+        <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Enter your password" onkeydown="if(event.key==='Enter') doLogin()"></div>
+        <button class="btn-main" onclick="doLogin()">Login →</button>
+        <div class="hint">
+            No account? <a onclick="switchTab('register',document.querySelectorAll('.tab-btn')[1])">Register here</a>
+            &nbsp;·&nbsp;<a onclick="switchTab('forgot',document.querySelectorAll('.tab-btn')[2])">Forgot password?</a>
+        </div>
+    </div>
+    <!-- REGISTER -->
+    <div class="panel" id="panel-register">
+        <div class="msg" id="reg-err"></div>
+        <div class="msg" id="reg-ok"></div>
+        <div class="field"><label>Full Name *</label><input type="text" id="rg-name" placeholder="e.g. Ravi Kumar"></div>
+        <div class="field"><label>Username *</label><input type="text" id="rg-user" placeholder="Min 3 characters"></div>
+        <div class="field"><label>Email *</label><input type="email" id="rg-email" placeholder="e.g. ravi@email.com"></div>
+        <div class="field"><label>Password *</label><input type="password" id="rg-pass" placeholder="Min 6 characters" oninput="checkStrength(this.value)">
+            <div class="strength-bar" id="str-bar"></div><div class="strength-label" id="str-label"></div></div>
+        <div class="field"><label>Confirm Password *</label><input type="password" id="rg-pass2" placeholder="Re-enter password"></div>
+        <div class="field"><label>Security Question *</label>
+            <select id="rg-secq">
+                <option value="">-- Select --</option>
+                <option value="pet">What is your pet's name?</option>
+                <option value="city">What city were you born in?</option>
+                <option value="school">What was your first school's name?</option>
+                <option value="mother">What is your mother's maiden name?</option>
+            </select></div>
+        <div class="field"><label>Security Answer *</label><input type="text" id="rg-seca" placeholder="Your answer"></div>
+        <button class="btn-main" onclick="doRegister()">Create Account</button>
+        <div class="hint">Already registered? <a onclick="switchTab('login',document.querySelectorAll('.tab-btn')[0])">Sign in</a></div>
+    </div>
+    <!-- FORGOT PASSWORD -->
+    <div class="panel" id="panel-forgot">
+        <div class="msg" id="fp-err"></div>
+        <div class="msg" id="fp-ok"></div>
+        <div class="msg info" id="fp-info" style="display:block;">Enter your username, then answer your security question to reset your password.</div>
+        <div id="fp-s1">
+            <div class="field"><label>Username</label><input type="text" id="fp-user" placeholder="Enter your username"></div>
+            <button class="btn-main" onclick="fpStep1()">Next →</button>
+        </div>
+        <div id="fp-s2" style="display:none;">
+            <div class="field"><label id="fp-qlabel">Security Question</label><input type="text" id="fp-ans" placeholder="Your answer"></div>
+            <div class="field"><label>New Password</label><input type="password" id="fp-np" placeholder="Min 6 characters"></div>
+            <div class="field"><label>Confirm New Password</label><input type="password" id="fp-np2" placeholder="Re-enter new password"></div>
+            <button class="btn-main" onclick="fpStep2()">Reset Password ✓</button>
+        </div>
+        <div class="hint"><a onclick="switchTab('login',document.querySelectorAll('.tab-btn')[0])">← Back to Sign In</a></div>
+    </div>
+    <div class="card-foot">City Hospital © 2024 · All Rights Reserved</div>
+</div>
+<script>
+function getUsers(){
+    var d=localStorage.getItem("ch_users");
+    if(!d){ var def={"admin":{name:"Admin",email:"admin@cityhospital.com",password:"admin123",secq:"pet",seca:"tommy"}}; localStorage.setItem("ch_users",JSON.stringify(def)); return def; }
+    return JSON.parse(d);
+}
+function saveUsers(u){ localStorage.setItem("ch_users",JSON.stringify(u)); }
+function switchTab(name,btn){
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
+    document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
+    document.getElementById("panel-"+name).classList.add("active");
+    btn.classList.add("active");
+}
+function showMsg(id,text,type){
+    var el=document.getElementById(id);
+    el.closest(".panel").querySelectorAll(".msg").forEach(function(m){m.style.display="none";});
+    el.className="msg "+type; el.textContent=text; el.style.display="block";
+}
+function doLogin(){
+    var user=document.getElementById("li-user").value.trim();
+    var pass=document.getElementById("li-pass").value;
+    if(!user||!pass){showMsg("login-err","⚠️ Please enter username and password.","error");return;}
+    var users=getUsers();
+    if(!users[user]){showMsg("login-err","❌ Username not found. Please register first.","error");return;}
+    if(users[user].password!==pass){showMsg("login-err","❌ Wrong password. Please try again.","error");return;}
+    showMsg("login-ok","✅ Login successful! Redirecting...","success");
+    localStorage.setItem("ch_loggedIn","true");
+    localStorage.setItem("ch_currentUser",user);
+    localStorage.setItem("ch_currentName",users[user].name);
+    setTimeout(function(){window.location.href="Patient_details.html";},900);
+}
+function doRegister(){
+    var name=document.getElementById("rg-name").value.trim();
+    var user=document.getElementById("rg-user").value.trim();
+    var email=document.getElementById("rg-email").value.trim();
+    var pass=document.getElementById("rg-pass").value;
+    var pass2=document.getElementById("rg-pass2").value;
+    var secq=document.getElementById("rg-secq").value;
+    var seca=document.getElementById("rg-seca").value.trim().toLowerCase();
+    if(!name||!user||!email||!pass||!pass2||!secq||!seca){showMsg("reg-err","⚠️ Please fill in all fields.","error");return;}
+    if(user.length<3){showMsg("reg-err","⚠️ Username must be at least 3 characters.","error");return;}
+    if(pass.length<6){showMsg("reg-err","⚠️ Password must be at least 6 characters.","error");return;}
+    if(pass!==pass2){showMsg("reg-err","❌ Passwords do not match.","error");return;}
+    if(!email.includes("@")){showMsg("reg-err","⚠️ Please enter a valid email address.","error");return;}
+    var users=getUsers();
+    if(users[user]){showMsg("reg-err","❌ Username '"+user+"' already exists.","error");return;}
+    users[user]={name:name,email:email,password:pass,secq:secq,seca:seca};
+    saveUsers(users);
+    showMsg("reg-ok","✅ Account created! Redirecting to Sign In...","success");
+    setTimeout(function(){
+        ["rg-name","rg-user","rg-email","rg-pass","rg-pass2","rg-seca"].forEach(function(id){document.getElementById(id).value="";});
+        document.getElementById("rg-secq").value="";
+        document.getElementById("li-user").value=user;
+        switchTab("login",document.querySelectorAll(".tab-btn")[0]);
+        showMsg("login-ok","✅ Account created! Enter your password to sign in.","success");
+    },1200);
+}
+var fpUser="";
+var qLabels={pet:"What is your pet's name?",city:"What city were you born in?",school:"What was your first school's name?",mother:"What is your mother's maiden name?"};
+function fpStep1(){
+    var user=document.getElementById("fp-user").value.trim();
+    if(!user){showMsg("fp-err","⚠️ Please enter your username.","error");return;}
+    var users=getUsers();
+    if(!users[user]){showMsg("fp-err","❌ Username not found.","error");return;}
+    fpUser=user;
+    document.getElementById("fp-qlabel").textContent=qLabels[users[user].secq]||"Security Question";
+    document.getElementById("fp-s1").style.display="none";
+    document.getElementById("fp-s2").style.display="block";
+    showMsg("fp-info","Answer your security question to set a new password.","info");
+}
+function fpStep2(){
+    var ans=document.getElementById("fp-ans").value.trim().toLowerCase();
+    var np=document.getElementById("fp-np").value;
+    var np2=document.getElementById("fp-np2").value;
+    if(!ans){showMsg("fp-err","⚠️ Please enter your security answer.","error");return;}
+    if(np.length<6){showMsg("fp-err","⚠️ New password must be at least 6 characters.","error");return;}
+    if(np!==np2){showMsg("fp-err","❌ Passwords do not match.","error");return;}
+    var users=getUsers();
+    if(users[fpUser].seca!==ans){showMsg("fp-err","❌ Security answer is incorrect.","error");return;}
+    users[fpUser].password=np; saveUsers(users);
+    showMsg("fp-ok","✅ Password reset! Redirecting to Sign In...","success");
+    setTimeout(function(){
+        ["fp-user","fp-ans","fp-np","fp-np2"].forEach(function(id){document.getElementById(id).value="";});
+        document.getElementById("fp-s1").style.display="block";
+        document.getElementById("fp-s2").style.display="none";
+        fpUser="";
+        switchTab("login",document.querySelectorAll(".tab-btn")[0]);
+    },1400);
+}
+function checkStrength(p){
+    var bar=document.getElementById("str-bar"); var lbl=document.getElementById("str-label");
+    if(!p){bar.style.width="0";lbl.textContent="";return;}
+    var s=0;
+    if(p.length>=6)s++; if(p.length>=10)s++; if(/[A-Z]/.test(p))s++; if(/[0-9]/.test(p))s++; if(/[^A-Za-z0-9]/.test(p))s++;
+    var lvl=[{w:"20%",c:"#ef4444",t:"Very weak"},{w:"40%",c:"#f97316",t:"Weak"},{w:"60%",c:"#eab308",t:"Fair"},{w:"80%",c:"#22c55e",t:"Strong"},{w:"100%",c:"#16a34a",t:"Very strong"}];
+    var l=lvl[Math.min(s,4)]; bar.style.width=l.w; bar.style.background=l.c; lbl.textContent=l.t; lbl.style.color=l.c;
+}
+</script>
+</body>
+</html>

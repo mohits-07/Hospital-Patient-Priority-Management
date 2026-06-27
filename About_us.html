@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>About Us - City Hospital</title>
+  <style>
+    /* FIXED: Combined the best parts of About_us.html and Untitled-3.html
+       (you had two About Us pages — merged them into one) */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #3790f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* FIXED: Added proper navbar (was missing in About_us.html original) */
+    header {
+      background-color: #007BFF;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      /* FIXED: added margin-bottom so footer doesn't overlap content */
+      margin-bottom: 40px;
+    }
+    h2 {
+      color: #2c3e50;
+      border-left: 4px solid #007BFF;
+      padding-left: 10px;
+    }
+    p {
+      line-height: 1.6;
+      color: #333;
+    }
+
+    /* FIXED: Untitled-3.html had h1 color as bright green (#00ff00) on blue —
+       very hard to read. Removed that. */
+
+    ul {
+      padding-left: 20px;
+      color: #333;
+      line-height: 1.8;
+    }
+
+    .mission, .vision, .values {
+      margin-top: 30px;
+    }
+
+    footer {
+      background-color: #F5F5F5;
+      color: #333;
+      text-align: center;
+      padding: 15px;
+      /* FIXED: was position:fixed in main page, overlapping content. Made static */
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🏥 City Hospital</h1>
+    <nav>
+      <a href="Main_page.html">Home</a>
+      <a href="Patient_details.html">Patient Form</a>
+      <a href="login.html">Login</a>
+      <a href="About_us.html">About Us</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Who We Are</h2>
+    <p>
+      City Hospital is a leading healthcare institution committed to delivering compassionate,
+      high-quality medical care to our community. With state-of-the-art facilities and a team
+      of dedicated professionals, we strive to ensure every patient receives personalized
+      attention and expert treatment.
+    </p>
+
+    <div class="mission">
+      <h2>Our Mission</h2>
+      <p>
+        To provide accessible, affordable, and advanced healthcare services while upholding
+        the highest standards of medical ethics and patient care.
+      </p>
+    </div>
+
+    <div class="vision">
+      <h2>Our Vision</h2>
+      <p>
+        To be the most trusted hospital in the region, known for innovation, excellence,
+        and a patient-first approach.
+      </p>
+    </div>
+
+    <!-- FIXED: Added Core Values section from Untitled-3.html (was missing in About_us.html) -->
+    <div class="values">
+      <h2>Core Values</h2>
+      <ul>
+        <li>💙 Compassion</li>
+        <li>🤝 Integrity</li>
+        <li>⭐ Excellence</li>
+        <li>👥 Teamwork</li>
+        <li>💡 Innovation</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:30px;">
+      <h2>About This System</h2>
+      <p>
+        Our <b>Patient Priority Management System</b> uses rule-based logic to classify
+        patients as Emergency, Urgent, or Normal — helping doctors treat the most critical
+        cases first. The system checks symptoms, vital signs (BP, HR, SpO2), and age to
+        make the decision.
+      </p>
+    </div>
+  </div>
+
+  <footer>
+    <p>Contact: +91 98765 43210 | Email: info@cityhospital.com</p>
+  </footer>
+
+</body>
+</html>

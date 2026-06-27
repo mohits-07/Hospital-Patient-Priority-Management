@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Our Doctors - City Hospital</title>
+    <style>
+
+        body { font-family: Arial, sans-serif; margin: 0; background-color: lightblue; }
+        header { background-color: #007BFF; color: white; padding: 0; }
+        .header-top { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,0.2); }
+        .site-title { font-size:20px; font-weight:bold; }
+        nav { display:flex; gap:0; flex-wrap:wrap; padding:0 10px; }
+        nav a { color:white; text-decoration:none; font-weight:bold; font-size:13px; padding:10px 14px; transition:0.15s; }
+        nav a:hover { background:rgba(255,255,255,0.2); }
+        .user-badge { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); border-radius:20px; padding:4px 12px; font-size:12px; display:flex; align-items:center; gap:8px; }
+        .logout-btn { background:#ff4444; color:white; border:none; border-radius:12px; padding:3px 10px; font-size:11px; cursor:pointer; font-family:Arial; }
+        .logout-btn:hover { background:#cc0000; }
+        footer { background-color:#2c3e50; color:#ccc; text-align:center; padding:20px; margin-top:40px; font-size:13px; }
+        footer a { color:#7fb3d3; text-decoration:none; }
+        footer a:hover { text-decoration:underline; }
+
+        .page-wrap { max-width:1100px; margin:28px auto; padding:0 16px; }
+        h2 { color:#2c3e50; margin-bottom:4px; }
+        .sub { color:#666; font-size:13px; margin-bottom:22px; }
+        .search-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; background:white; padding:12px 16px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+        .search-bar input, .search-bar select { padding:8px 12px; border:1px solid #ccc; border-radius:6px; font-size:13px; font-family:Arial; }
+        .search-bar input { flex:1; min-width:180px; }
+        .doctors-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; margin-bottom:30px; }
+        .doc-card { background:white; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); overflow:hidden; transition:transform 0.15s,box-shadow 0.15s; }
+        .doc-card:hover { transform:translateY(-3px); box-shadow:0 6px 18px rgba(0,0,0,0.15); }
+        .doc-card-top { padding:20px; text-align:center; color:white; }
+        .doc-avatar { width:72px; height:72px; border-radius:50%; background:rgba(255,255,255,0.25); border:3px solid white; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 10px; }
+        .doc-card-top h3 { margin:0 0 4px; font-size:16px; }
+        .doc-card-top .dept { font-size:12px; background:rgba(255,255,255,0.2); border-radius:12px; padding:3px 10px; display:inline-block; }
+        .doc-card-body { padding:16px; }
+        .doc-info { display:flex; gap:6px; margin-bottom:8px; font-size:13px; color:#444; }
+        .doc-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; }
+        .doc-tag { font-size:11px; padding:2px 8px; background:#eff6ff; color:#1d4ed8; border-radius:10px; border:1px solid #bfdbfe; }
+        .avail-badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:bold; margin-top:10px; }
+        .avail-badge.available { background:#d1fae5; color:#065f46; }
+        .avail-badge.busy      { background:#fff3cc; color:#92400e; }
+        .avail-badge.off       { background:#f1f5f9; color:#64748b; }
+        .btn-appt { width:100%; margin-top:12px; padding:9px; background:#007BFF; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-family:Arial; font-weight:bold; }
+        .btn-appt:hover { background:#0056b3; }
+        .no-results { text-align:center; padding:40px; color:#999; font-size:15px; }
+        .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:200; }
+        .overlay.open { display:flex; }
+        .modal { background:white; border-radius:10px; width:90%; max-width:440px; box-shadow:0 8px 32px rgba(0,0,0,0.2); }
+        .modal-head { background:#007BFF; color:white; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; border-radius:10px 10px 0 0; }
+        .modal-head h3 { margin:0; font-size:15px; }
+        .modal-close { background:none; border:none; color:white; font-size:22px; cursor:pointer; }
+        .modal-body { padding:20px; }
+        .field { margin-bottom:14px; }
+        .field label { display:block; font-size:12px; font-weight:bold; color:#444; margin-bottom:5px; }
+        .field input, .field select, .field textarea { width:100%; padding:9px 12px; border:1px solid #ccc; border-radius:6px; font-size:13px; font-family:Arial; box-sizing:border-box; }
+        .btn-book { width:100%; padding:11px; background:#28a745; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:bold; font-family:Arial; }
+        .btn-book:hover { background:#1e7e34; }
+        .msg { font-size:12px; padding:8px; border-radius:5px; margin-bottom:10px; display:none; text-align:center; }
+        .msg.success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+        .msg.error   { background:#fde8e8; color:#b91c1c; border:1px solid #fca5a5; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <span class="site-title">🏥 City Hospital</span>
+            <div id="headerUserBadge" class="user-badge" style="display:none;">
+                👤 <span id="headerUserName"></span>
+                <button class="logout-btn" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+        <nav>
+            <a href="Main_page.html"        id="nav-home">Home</a>
+            <a href="Patient_details.html"  id="nav-patient">Patient Form</a>
+            <a href="patient_database.html" id="nav-db"> Database</a>
+            <a href="queue.html"            id="nav-queue"> Queue</a>
+            <a href="doctors.html"          id="nav-doctors"> Doctors</a>
+            <a href="About_us.html"         id="nav-about">About Us</a>
+            <a href="login.html"            id="nav-login"> Login</a>
+        </nav>
+    </header>
+<div class="page-wrap">
+    <h2>👨‍⚕️ Our Doctors</h2>
+    <p class="sub">Meet our team of experienced specialists. Click "Book Appointment" to schedule a visit.</p>
+    <div class="search-bar">
+        <input type="text" id="docSearch" placeholder="🔍 Search by name or specialization..." oninput="filterDoctors()">
+        <select id="deptFilter" onchange="filterDoctors()">
+            <option value="">All Departments</option>
+            <option>Cardiology</option><option>Emergency Medicine</option><option>Neurology</option>
+            <option>Orthopedics</option><option>Pediatrics</option><option>General Medicine</option>
+            <option>Pulmonology</option><option>Endocrinology</option>
+        </select>
+        <select id="availFilter" onchange="filterDoctors()">
+            <option value="">All Availability</option>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+            <option value="off">Off Duty</option>
+        </select>
+    </div>
+    <div class="doctors-grid" id="doctorsGrid"></div>
+</div>
+
+<div class="overlay" id="apptOverlay" onclick="closeAppt(event)">
+    <div class="modal">
+        <div class="modal-head"><h3 id="appt-title">Book Appointment</h3><button class="modal-close" onclick="closeApptDirect()">✕</button></div>
+        <div class="modal-body">
+            <div class="msg" id="appt-ok"></div>
+            <div class="msg" id="appt-err"></div>
+            <div class="field"><label>Your Name *</label><input type="text" id="appt-name" placeholder="Full name"></div>
+            <div class="field"><label>Phone Number *</label><input type="text" id="appt-phone" placeholder="e.g. 98765 43210"></div>
+            <div class="field"><label>Preferred Date *</label><input type="date" id="appt-date"></div>
+            <div class="field"><label>Time Slot *</label>
+                <select id="appt-time"><option value="">-- Select --</option>
+                <option>09:00 AM</option><option>09:30 AM</option><option>10:00 AM</option><option>10:30 AM</option>
+                <option>11:00 AM</option><option>11:30 AM</option><option>02:00 PM</option><option>02:30 PM</option>
+                <option>03:00 PM</option><option>03:30 PM</option><option>04:00 PM</option></select>
+            </div>
+            <div class="field"><label>Reason for Visit</label><textarea id="appt-reason" rows="2" placeholder="Brief description"></textarea></div>
+            <button class="btn-book" onclick="bookAppointment()">📅 Confirm Appointment</button>
+        </div>
+    </div>
+</div>
+    <footer>
+        <div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:12px;">
+            <div><b style="color:white;">Quick Links</b><br><a href="Main_page.html">Home</a><br><a href="Patient_details.html">Patient Form</a><br><a href="patient_database.html">Patient Database</a></div>
+            <div><b style="color:white;">Hospital</b><br><a href="queue.html">Patient Queue</a><br><a href="doctors.html">Our Doctors</a><br><a href="About_us.html">About Us</a></div>
+            <div><b style="color:white;">Contact</b><br>📞 +91 98765 43210<br>✉️ info@cityhospital.com<br>📍 123 Hospital Road, Chennai</div>
+        </div>
+        <p style="border-top:1px solid #444;padding-top:12px;margin-top:8px;">🏥 City Hospital © 2024 · All Rights Reserved</p>
+    </footer>
+<script>
+var doctors = [
+    {id:1,name:"Dr. Arjun Mehta",    dept:"Cardiology",       exp:"15 years",qual:"MD, DM Cardiology",     phone:"Ext. 101",room:"Room 201",      avail:"available",emoji:"👨‍⚕️",skills:["ECG","Angioplasty","Heart Failure","Hypertension"]},
+    {id:2,name:"Dr. Priya Sharma",   dept:"Emergency Medicine",exp:"10 years",qual:"MD, FICEM",             phone:"Ext. 102",room:"Emergency Dept", avail:"available",emoji:"👩‍⚕️",skills:["Trauma","Critical Care","Resuscitation","Triage"]},
+    {id:3,name:"Dr. Ravi Kumar",     dept:"Neurology",         exp:"12 years",qual:"MD, DM Neurology",      phone:"Ext. 103",room:"Room 305",      avail:"busy",     emoji:"👨‍⚕️",skills:["Stroke","Epilepsy","Parkinson's","MRI Diagnosis"]},
+    {id:4,name:"Dr. Lakshmi Nair",   dept:"Pediatrics",        exp:"8 years", qual:"MD Pediatrics",         phone:"Ext. 104",room:"Room 102",      avail:"available",emoji:"👩‍⚕️",skills:["Neonatology","Child Health","Vaccination","Fever"]},
+    {id:5,name:"Dr. Suresh Patel",   dept:"Orthopedics",       exp:"18 years",qual:"MS Orthopedics",        phone:"Ext. 105",room:"Room 208",      avail:"available",emoji:"👨‍⚕️",skills:["Fractures","Joint Replacement","Sports Injury","Spine"]},
+    {id:6,name:"Dr. Meena Iyer",     dept:"General Medicine",  exp:"20 years",qual:"MD General Medicine",   phone:"Ext. 106",room:"Room 104",      avail:"available",emoji:"👩‍⚕️",skills:["Fever","Diabetes","Hypertension","General OPD"]},
+    {id:7,name:"Dr. Anil Verma",     dept:"Pulmonology",       exp:"11 years",qual:"MD, DM Pulmonology",    phone:"Ext. 107",room:"Room 310",      avail:"busy",     emoji:"👨‍⚕️",skills:["Asthma","COPD","Pneumonia","Bronchoscopy"]},
+    {id:8,name:"Dr. Sunita Reddy",   dept:"Endocrinology",     exp:"9 years", qual:"MD, DM Endocrinology",  phone:"Ext. 108",room:"Room 214",      avail:"off",      emoji:"👩‍⚕️",skills:["Diabetes","Thyroid","PCOS","Hormonal Disorders"]}
+];
+var currentDocName="";
+function renderDoctors(list){
+    var grid=document.getElementById("doctorsGrid");
+    if(!list.length){grid.innerHTML='<div class="no-results">No doctors found.</div>';return;}
+    var colors={available:"#007BFF",busy:"#d97706",off:"#64748b"};
+    grid.innerHTML=list.map(function(d){
+        var availLabel=d.avail==="available"?"🟢 Available":d.avail==="busy"?"🟡 Busy":"⚫ Off Duty";
+        var tags=d.skills.map(function(s){return '<span class="doc-tag">'+s+'</span>';}).join("");
+        return '<div class="doc-card">'
+            +'<div class="doc-card-top" style="background:'+colors[d.avail]+'">'
+            +'<div class="doc-avatar">'+d.emoji+'</div>'
+            +'<h3>'+d.name+'</h3><span class="dept">'+d.dept+'</span></div>'
+            +'<div class="doc-card-body">'
+            +'<div class="doc-info">🎓 '+d.qual+'</div>'
+            +'<div class="doc-info">⏱ Experience: '+d.exp+'</div>'
+            +'<div class="doc-info">📞 '+d.phone+'</div>'
+            +'<div class="doc-info">🚪 '+d.room+'</div>'
+            +'<div class="doc-tags">'+tags+'</div>'
+            +'<span class="avail-badge '+d.avail+'">'+availLabel+'</span><br>'
+            +'<button class="btn-appt" onclick="openAppt(\''+d.name+'\')">📅 Book Appointment</button>'
+            +'</div></div>';
+    }).join("");
+}
+function filterDoctors(){
+    var s=document.getElementById("docSearch").value.toLowerCase();
+    var dept=document.getElementById("deptFilter").value;
+    var avail=document.getElementById("availFilter").value;
+    var filtered=doctors.filter(function(d){
+        var ms=!s||d.name.toLowerCase().includes(s)||d.dept.toLowerCase().includes(s)||d.skills.join(" ").toLowerCase().includes(s);
+        return ms&&(!dept||d.dept===dept)&&(!avail||d.avail===avail);
+    });
+    renderDoctors(filtered);
+}
+function openAppt(name){
+    currentDocName=name;
+    document.getElementById("appt-title").textContent="Book Appointment — "+name;
+    document.getElementById("appt-date").min=new Date().toISOString().split("T")[0];
+    document.getElementById("apptOverlay").classList.add("open");
+}
+function bookAppointment(){
+    var name=document.getElementById("appt-name").value.trim();
+    var phone=document.getElementById("appt-phone").value.trim();
+    var date=document.getElementById("appt-date").value;
+    var time=document.getElementById("appt-time").value;
+    var err=document.getElementById("appt-err"); var ok=document.getElementById("appt-ok");
+    err.style.display="none"; ok.style.display="none";
+    if(!name||!phone||!date||!time){err.className="msg error";err.textContent="⚠️ Please fill all required fields.";err.style.display="block";return;}
+    var appts=JSON.parse(localStorage.getItem("ch_appointments")||"[]");
+    appts.push({doctor:currentDocName,patient:name,phone:phone,date:date,time:time,reason:document.getElementById("appt-reason").value,bookedAt:new Date().toLocaleString()});
+    localStorage.setItem("ch_appointments",JSON.stringify(appts));
+    ok.className="msg success"; ok.textContent="✅ Appointment booked with "+currentDocName+" on "+date+" at "+time+"!"; ok.style.display="block";
+    setTimeout(function(){["appt-name","appt-phone","appt-reason"].forEach(function(id){document.getElementById(id).value="";}); document.getElementById("appt-date").value=""; document.getElementById("appt-time").value=""; closeApptDirect();},2000);
+}
+function closeAppt(e){if(e.target===document.getElementById("apptOverlay")) closeApptDirect();}
+function closeApptDirect(){document.getElementById("apptOverlay").classList.remove("open");}
+window.onload=function(){renderDoctors(doctors);};
+</script>
+    <script>
+    (function(){
+        var a=document.getElementById("nav-doctors"); if(a) a.style.background="rgba(255,255,255,0.3)";
+        var li=localStorage.getItem("ch_loggedIn"), nm=localStorage.getItem("ch_currentName")||localStorage.getItem("ch_currentUser");
+        if(li==="true"&&nm){
+            var b=document.getElementById("headerUserBadge"),sp=document.getElementById("headerUserName"),l=document.getElementById("nav-login");
+            if(b) b.style.display="flex"; if(sp) sp.textContent=nm;
+            if(l){l.textContent="👤 "+nm; l.href="#"; l.onclick=function(){doLogout();return false;};}
+        }
+    })();
+    function doLogout(){localStorage.removeItem("ch_loggedIn");localStorage.removeItem("ch_currentUser");localStorage.removeItem("ch_currentName");window.location.href="login.html";}
+    </script>
+</body>
+</html>
